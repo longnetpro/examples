@@ -15,7 +15,8 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
 
-import info.longnetpro.common.util.fs.FilePath;
+import info.longnetpro.common.util.fs.FilePathUtils;
+import info.longnetpro.common.util.system.SystemUtils;
 import info.longnetpro.pdflib.document.Anchor;
 import info.longnetpro.pdflib.document.ContentBox;
 import info.longnetpro.pdflib.document.Page;
@@ -39,19 +40,15 @@ public class PdfLibExamples {
 
 	private static String getLicenseFilePath() throws URISyntaxException {
 		String licfile = "./itextkey14714588134380.xml";
-		String jarfile = LicenseKey.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-		System.out.println(jarfile);
-		FilePath fp = new FilePath();
-		fp.setPath(jarfile);
-		FilePath fp1 = fp.resolve(licfile);
-		return fp1.getPath();
+		String jarfile = SystemUtils.getClassPath(LicenseKey.class);
+		String path = FilePathUtils.resolve(jarfile, licfile);
+		System.out.println(path);
+		return path;
 	}
 
 	private static String getTargetFilePath() {
 		String file = "/temp/anchor.pdf";
-		FilePath fp = new FilePath();
-		fp.setPath(file);
-		return fp.normalize().getPath();
+		return FilePathUtils.normalize(file);
 	}
 
 	public static void generatePdf() throws FileNotFoundException, DocumentException, URISyntaxException {
