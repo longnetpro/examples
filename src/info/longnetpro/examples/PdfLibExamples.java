@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 
 import com.itextpdf.license.LicenseKey;
 import com.itextpdf.license.LicenseKeyException;
@@ -14,12 +15,13 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import info.longnetpro.common.util.fs.FilePath;
 import info.longnetpro.pdflib.document.Anchor;
 import info.longnetpro.pdflib.document.ContentBox;
 import info.longnetpro.pdflib.document.Page;
 
 public class PdfLibExamples {
-	public static void loadLicenseFile(InputStream licenseIs) {
+	private static void loadLicenseFile(InputStream licenseIs) {
 		try {
 			LicenseKey.loadLicenseFile(licenseIs);
 		} catch (LicenseKeyException e) {
@@ -27,7 +29,7 @@ public class PdfLibExamples {
 		}
 	}
 
-	public static void loadLicenseFile(String pathToLicFile) {
+	private static void loadLicenseFile(String pathToLicFile) {
 		try {
 			loadLicenseFile(new FileInputStream(pathToLicFile));
 		} catch (FileNotFoundException fnf) {
@@ -35,11 +37,28 @@ public class PdfLibExamples {
 		}
 	}
 
-	public static void main(String[] args) throws DocumentException, FileNotFoundException {
-		String licFile = "C:\\_TFS\\BentallKennedy-EBS\\EBS\\Main\\ADF\\configuration\\license\\itextkey14714588134380.xml";
+	private static String getLicenseFilePath() throws URISyntaxException {
+		String licfile = "./itextkey14714588134380.xml";
+		String jarfile = LicenseKey.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+		System.out.println(jarfile);
+		FilePath fp = new FilePath();
+		fp.setPath(jarfile);
+		FilePath fp1 = fp.resolve(licfile);
+		return fp1.getPath();
+	}
+
+	private static String getTargetFilePath() {
+		String file = "/temp/anchor.pdf";
+		FilePath fp = new FilePath();
+		fp.setPath(file);
+		return fp.normalize().getPath();
+	}
+
+	public static void generatePdf() throws FileNotFoundException, DocumentException, URISyntaxException {
+		String licFile = getLicenseFilePath();
 		loadLicenseFile(licFile);
 
-		String dest = "c:\\temp\\anchor.pdf";
+		String dest = getTargetFilePath();
 		Document doc = new Document();
 		PdfWriter.getInstance(doc, new FileOutputStream(dest));
 		Rectangle pageSize = PageSize.LETTER;
@@ -66,6 +85,9 @@ public class PdfLibExamples {
 			doc.add(rect);
 		}
 		doc.close();
+	}
 
+	public static void main(String[] args) throws DocumentException, FileNotFoundException, URISyntaxException {
+		generatePdf();
 	}
 }
