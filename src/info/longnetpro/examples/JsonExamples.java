@@ -19,6 +19,7 @@ import info.longnetpro.json.JsonPointerException;
 import info.longnetpro.json.JsonSerializer;
 import info.longnetpro.json.JsonString;
 import info.longnetpro.json.JsonType;
+import info.longnetpro.json.JsonUtils;
 import info.longnetpro.json.StringUtils;
 
 public class JsonExamples {
@@ -27,8 +28,11 @@ public class JsonExamples {
 		String filename = "C:\\temp\\test.json";
 		filename = "C:\\JDeveloper000\\bentall\\configuration\\framework\\defaultMenu.json";
 		File f = new File(filename);
-		JsonParser parser = new JsonParser(f);
-		parser.parse();
+		
+		JsonType value = null;
+		
+		value = JsonUtils.parseJsonFile(f);
+		JsonUtils.print(value);
 
 		JsonFormat format = new JsonFormat();
 		// format.setIndenting(false);
@@ -41,9 +45,8 @@ public class JsonExamples {
 		format.setValueAlign(true);
 		// format.setKeyRightAligned(true);
 
-		Writer out = new StringWriter();
-		parser.output(out, format);
-
+		JsonUtils.print(value, format);
+		
 		// String s =
 		// "{\"firstName\\t/\\t6\":false,\"middleName\":null,\"lastName\":\"Smith\",\"age\":25,\"address\":{\"streetAddress\":\"21
 		// 2nd Street\",\"city\":\"New
@@ -53,11 +56,11 @@ public class JsonExamples {
 		String s = "[true , null,{},1234567 ]";
 		// String s = out.toString();
 
-		parser = new JsonParser(s);
-		parser.parse();
-		out = new StringWriter();
-		parser.output(out, format);
-		System.out.println(parser.getParsedJsonValue().toJsonString());
+		value = JsonUtils.parseJsonString(s);
+		JsonUtils.print(value);
+		
+		JsonUtils.print(value, format);
+		System.out.println(value.toJsonString());
 	}
 
 	public static void test1() {
@@ -78,11 +81,9 @@ public class JsonExamples {
 				.cast(JsonArray.class).add("haha").add(StringUtils.convertString("星期一你好", "UTF-8"));
 
 		JsonFormat format = new JsonFormat();
-		Writer out = new StringWriter();
-		JsonSerializer.serialize(obj, out, format);
-		String s = out.toString();
-		System.out.println(s);
-
+		
+		JsonUtils.print(obj, format);
+		
 		// format.setIndenting(false);
 		// format.setCompactFormat(true);
 		// format.setHexAllCharacters(true);
@@ -93,9 +94,9 @@ public class JsonExamples {
 		// format.setEscapeSlash(true);
 		// format.setKeyRightAligned(true);
 		// s = "true";
-		JsonParser jp = new JsonParser(s);
-		jp.parse();
-		jp.print(format);
+		
+		
+		JsonUtils.print(obj, format);
 	}
 
 	public static void test4() throws JsonBuilderException, IOException, JsonPointerException {
@@ -105,28 +106,28 @@ public class JsonExamples {
 				.setArrayProperty("array").beginArray().add("hello world!").addObject().beginObject()
 				.setProperty("why", "end").endObject().add("address").endArray().setProperty("key4", 12345).endObject()
 				.endArray().build();
-		JsonSerializer.print(array);
+		JsonUtils.print(array);
 
 		JsonType object =
-				// jb.reset().createObject().beginObject().setProperty("haha",
-				// "test").setProperty("key",
-				// 12345).setArrayProperty("array").setArrayProperty("arr/a\\y1").beginArray().add(123).add("array
-				// in object").endArray().endObject().build();
-				jb.reset().createObject().beginObject().setArrayProperty("array").endObject().build();
-		JsonSerializer.print(object);
+				 jb.reset().createObject().beginObject().setProperty("haha",
+				 "test").setProperty("key",
+				 12345).setArrayProperty("array").setArrayProperty("arr/a\\y1").beginArray().add(123).add("array in object").endArray().endObject().build();
+				//jb.reset().createObject().beginObject().setArrayProperty("array").endObject().build();
+		JsonUtils.print(object);
 
 		System.out.println("--------------------------");
 
-		String r = JsonString.create("arr/a\\y1").toJsonPointerReference();
+		String r = JsonPointer.createReference("arr/a\\y1");
 
 		String pointer = "/" + r + "/1";
 		JsonType obj = JsonPointer.create().setReferencedObject(object).setPointer(pointer).resolve();
-		JsonSerializer.print(obj);
+		JsonUtils.print(obj);
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, JsonParserException,
 			UnsupportedEncodingException, IOException, JsonBuilderException, JsonPointerException {
-		test3();
+		test4();
+		/*
 		String s = "\uD834\uDD1E";
 		s = "星期一";
 		System.out.println(s);
@@ -137,5 +138,6 @@ public class JsonExamples {
 		System.out.println(s.length());
 		System.out.println((char) i);
 		System.out.println("Test2");
+		*/
 	}
 }
