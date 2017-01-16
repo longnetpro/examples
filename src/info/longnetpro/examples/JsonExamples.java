@@ -15,7 +15,7 @@ import info.longnetpro.json.JsonPointer;
 import info.longnetpro.json.JsonPointerException;
 import info.longnetpro.json.JsonType;
 import info.longnetpro.json.JsonUtils;
-import info.longnetpro.json.StringUtils;
+import info.longnetpro.json.util.StringUtils;
 
 public class JsonExamples {
 	public static void test()
